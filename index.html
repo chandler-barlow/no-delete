@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>No Delete</title>
+  </head>
+  <body>
+    <h1>~ No Delete ~</h1>
+    <textarea
+      spellcheck="false"
+      id="input"
+      placeholder="Start typing..."
+      autofocus
+    >
+    </textarea>
+    <div class="button-container">
+      <button class="secondary" id="clear">Clear</button>
+      <button id="copy">Copy</button>
+    </div>
+  </body>
+  <script>
+    let value = localStorage.getItem("textinput") ?? "";
+    const input = document.getElementById("input");
+    input.value = value;
+    const copy = document.getElementById("copy");
+    const clear = document.getElementById("clear");
+
+    input.addEventListener("input", ({ target }) => {
+      console.log(target.value);
+      const newValue = target.value;
+      const isValid = newValue.length >= value.length;
+      if (!isValid) {
+        target.value = value;
+        return;
+      }
+      value = newValue;
+      localStorage.setItem("textinput", value);
+    });
+
+    function buttonDown({ target }) {
+      target.style =
+        "background-color: black; color: white;";
+    }
+
+    function buttonUp({ target }) {
+      target.style =
+        "background-color: #f1f1f1; color: black;";
+    }
+
+    copy.addEventListener("mousedown", buttonDown);
+    copy.addEventListener("mouseup", buttonUp);
+    copy.addEventListener("click", ({ target }) => {
+      input.select();
+      input.setSelectionRange(0, 99999);
+      navigator.clipboard.writeText(input.value);
+    });
+
+    clear.addEventListener("mousedown", buttonDown);
+    clear.addEventListener("mouseup", buttonUp);
+    clear.addEventListener("click", () => {
+      const confirmation = window.confirm(
+        "Are you sure you want to clear everything?"
+      );
+      if (confirmation) {
+        input.value = "";
+        value = "";
+        localStorage.removeItem("textinput");
+      }
+    });
+  </script>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap");
+    h1 {
+      font-family: "Libre Baskerville", serif;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-family: sans-serif;
+    }
+    textarea {
+      width: 90%;
+      height: 80%;
+      font-size: 1.25rem;
+      padding: 0.5rem;
+      border: none;
+      font-family: "Libre Baskerville", serif;
+      resize: none;
+    }
+    *:focus {
+      outline: none;
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      width: 90%;
+      margin-bottom: 1rem;
+    }
+    button {
+      width: 30%;
+      height: 3rem;
+      font-size: 1.5rem;
+      font-family: "Libre Baskerville", serif;
+      border: none;
+      background-color: #f1f1f1;
+      cursor: pointer;
+      margin: 0 0.25rem;
+    }
+  </style>
+</html>
